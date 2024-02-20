@@ -1,14 +1,18 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FilterContext } from "../context/Context";
 import { Link } from "react-router-dom";
+import { IoMdArrowDropupCircle } from "react-icons/io";
+import { IoMdArrowDropdownCircle } from "react-icons/io";
 
 const Cart = () => {
-  const { product, count,removeFromCart } = useContext(FilterContext);
+  const { product, count} = useContext(FilterContext);
+
+  
 
   // cart item found
 
   let cartProduct = [];
-  let total = 0; 
+  let total = 0
 
   if (count.length != 0) {
     cartProduct = product.filter((d) => {
@@ -17,7 +21,7 @@ const Cart = () => {
     });
   }
 
-
+  
 
   return (
     <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
@@ -34,22 +38,23 @@ const Cart = () => {
               type="button"
               className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
             >
-              <span className="absolute -inset-0.5" />
-              <span className="sr-only">Close panel</span>
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <Link to="/">
+                {" "}
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </Link>
             </button>
           </div>
         </div>
@@ -57,47 +62,15 @@ const Cart = () => {
           <div className="flow-root">
             <ul role="list" className="-my-6 divide-y divide-gray-200">
               {cartProduct.map((d, i) => {
-                total += d.price
-                return (
-                  <li className="flex py-6">
-                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                      <img
-                       src={d.image}
-                        alt="Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt."
-                        className="h-full w-full object-cover object-center"
-                      />
-                    </div>
-                    <div className="ml-4 flex flex-1 flex-col">
-                      <div>
-                        <div className="flex justify-between text-base font-medium text-gray-900">
-                          <h3>
-                            <a href="#">{d.title}</a>
-                          </h3>
-                          <p className="ml-4">${Math.floor(d.price)}</p>
-                        </div>
-                        <p className="mt-1 text-sm text-gray-500">Salmon</p>
-                      </div>
-                      <div className="flex flex-1 items-end justify-between text-sm">
-                        <p className="text-gray-500">Qty 1</p>
-                        <div className="flex">
-                          <button
-                            type="button"
-                            className="font-medium text-indigo-600 hover:text-indigo-500"
-                            onClick={()=>removeFromCart(d.id)}
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}      
+               total += d.price
+                return <CartItem total={total} image={d.image} title={d.title} price={d.price} id={d.id} />; 
+              })}
             </ul>
           </div>
         </div>
       </div>
       <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+
         <div className="flex justify-between text-base font-medium text-gray-900">
           <p>Subtotal</p>
           <p>${Math.floor(total)}</p>
@@ -120,7 +93,7 @@ const Cart = () => {
               type="button"
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
-             <Link to='/'>Continue Shopping</Link>
+              <Link to="/">Continue Shopping</Link>
               <span aria-hidden="true"> →</span>
             </button>
           </p>
@@ -131,3 +104,69 @@ const Cart = () => {
 };
 
 export default Cart;
+
+const CartItem = ({image,title,price,id,total,setTotal}) => {
+//  let  total = 0;
+  // total += price
+  const {removeFromCart} = useContext(FilterContext)
+
+  const [qty, setQty] = useState(1);
+
+  const qtyUpHandler = () => {
+    if (qty >= 1) {
+      setQty(qty + 1);
+    }
+  };
+
+  const qtyDownHandler = () => {
+    if (qty != 1) {
+      setQty(qty - 1);
+    }
+  };
+ 
+  return (
+    <li className="flex py-6">
+      <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+        <img
+          src={image}
+          alt="Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt."
+          className="h-full w-full object-cover object-center"
+        />
+      </div>
+      <div className="ml-4 flex flex-1 flex-col">
+        <div>
+          <div className="flex justify-between text-base font-medium text-gray-900">
+            <h3>
+              <a href="#">{title}</a>
+            </h3>
+            <p className="ml-4">${Math.floor(price)*qty}</p>
+          </div>
+          <p className="mt-1 text-sm text-gray-500">Salmon</p>
+        </div>
+        <div className="flex flex-1 items-end justify-between text-sm">
+          <p className="text-gray-500 flex gap-1 text-xl items-center">
+            Qty {qty}
+            <div>
+              <span onClick={qtyUpHandler}>
+                <IoMdArrowDropupCircle />
+              </span>
+              <span onClick={qtyDownHandler}>
+                <IoMdArrowDropdownCircle />
+              </span>
+            </div>
+          </p>
+          <div className="flex">
+            <button
+              type="button"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+              onClick={() => removeFromCart(id)}
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+};
+export {CartItem}

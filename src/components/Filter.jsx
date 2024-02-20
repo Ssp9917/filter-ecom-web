@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useRef } from "react";
+import { FilterContext } from "../context/Context";
 
 
 
@@ -11,10 +12,10 @@ const Filter = ({
   setPrice,
   setRating,
   setCheck,
-  product,
 }) => {
-
-const inpRef = useRef()
+  
+  const inpRef = useRef()
+  const {product} = useContext(FilterContext)
 
   const quaHandler = (category) => {
     console.log(category);

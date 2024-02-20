@@ -38,9 +38,31 @@ const Context = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  });
+  },[]);
+
+
+  // cart item set in localhost
+  useEffect(
+    ()=>{
+      if(count.length != 0){
+        localStorage.setItem('filter',JSON.stringify(count))
+      }
+    },[count]
+  )
+
+  // get product from localhost
+
+  useEffect(
+    ()=>{
+      const lsData = localStorage.getItem('filter');
+      if(lsData != null){
+        setCount(JSON.parse(lsData))
+      }
+    },[]
+  )
+
   return (
-    <FilterContext.Provider value={{ addToCart, product, count,removeFromCart}}>
+    <FilterContext.Provider value={{ addToCart, product, count,removeFromCart,setProduct}}>
       {props.children}
     </FilterContext.Provider>
   );

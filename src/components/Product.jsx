@@ -4,7 +4,7 @@ import { FilterContext } from "../context/Context";
 const Product = ({ cat, price, rating }) => {
 
   // context 
-  const {addToCart,product} = useContext(FilterContext);
+  let {addToCart,product} = useContext(FilterContext);
 
   // category filter
   if (cat.length != 0) {
@@ -15,6 +15,7 @@ const Product = ({ cat, price, rating }) => {
         return false;
       }
     });
+    
   }
 
   // price filter
@@ -44,7 +45,7 @@ const Product = ({ cat, price, rating }) => {
 
   return (
     <div className=" grid  col-span-4">
-      <div className="text-center font-bold text-2xl "> Products </div>
+      <div className="text-center font-bold text-2xl m"> Products </div>
       <hr />
       <div className="flex gap-5 justify-center flex-wrap">
         {product.map((d, i) => {
